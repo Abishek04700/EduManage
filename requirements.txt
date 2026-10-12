@@ -2,3 +2,4 @@ Django==6.1
 django-crispy-forms==2.7
 crispy-bootstrap5==2026.3
 Pillow==12.3.0
+gunicorn
