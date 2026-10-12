@@ -1,0 +1,143 @@
+
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+{% block page_title %}My Dashboard{% endblock %}
+{% block content %}
+
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="stat-icon" style="background:var(--accent-soft);color:var(--accent);width:52px;height:52px;font-size:1.4rem;">
+          <i class="bi bi-mortarboard-fill"></i>
+        </div>
+
+        <div class="flex-grow-1">
+          <h5 class="mb-0">
+            {{ user.get_full_name|default:user.username }}
+          </h5>
+
+          <div class="text-muted small">
+            Admission No: {{ student.admission_number|default:"—" }}
+            · {{ student.course|default:"No class assigned" }}
+          </div>
+        </div>
+
+        {% if student %}
+          <a href="{% url 'students:detail' student.pk %}"
+             class="btn btn-primary btn-sm text-nowrap">
+            <i class="bi bi-person-circle"></i> My Profile
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-4">
+    <div class="stat-card text-center">
+      <div class="stat-value" style="color:var(--success);">
+        {{ attendance_summary.present|default:0 }}
+      </div>
+      <div class="stat-label">Present</div>
+    </div>
+  </div>
+
+  <div class="col-4">
+    <div class="stat-card text-center">
+      <div class="stat-value" style="color:var(--danger);">
+        {{ attendance_summary.absent|default:0 }}
+      </div>
+      <div class="stat-label">Absent</div>
+    </div>
+  </div>
+
+  <div class="col-4">
+    <div class="stat-card text-center">
+      <div class="stat-value" style="color:var(--warning);">
+        {{ attendance_summary.late|default:0 }}
+      </div>
+      <div class="stat-label">Late</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card mb-3">
+      <div class="card-header">Recent Results</div>
+
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>Exam</th>
+              <th>Subject</th>
+              <th>Marks</th>
+              <th>Grade</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for r in recent_results %}
+              <tr>
+                <td>{{ r.exam.name }}</td>
+                <td>{{ r.subject.name }}</td>
+                <td>{{ r.marks_obtained }}/{{ r.max_marks }}</td>
+                <td>
+                  <span class="badge bg-light text-dark border">
+                    {{ r.grade }}
+                  </span>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="text-center text-muted py-3">
+                  No results published yet.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card mb-3">
+      <div class="card-header">Fee Payments</div>
+
+      <ul class="list-group list-group-flush">
+        {% for p in fee_payments %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ p.fee_structure.title }}</span>
+            <span class="badge badge-status-{{ p.status }}">
+              {{ p.get_status_display }}
+            </span>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted small">
+            No fee records yet.
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Notice Board</div>
+
+      <div class="card-body">
+        {% for n in notices %}
+          <div class="mb-2 pb-2 {% if not forloop.last %}border-bottom{% endif %}">
+            <div class="fw-semibold small">{{ n.title }}</div>
+          </div>
+        {% empty %}
+          <p class="text-muted small mb-0">No notices yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

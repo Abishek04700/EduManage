@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Notice Board{% endblock %}
+{% block page_title %}Notice Board{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  {% if user.is_superuser or user.role == 'ADMIN' or user.role == 'TEACHER' %}
+  <a href="{% url 'notices:create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Post Notice</a>
+  {% endif %}
+</div>
+{% for n in notices %}
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <h6 class="mb-1">{% if n.is_pinned %}<i class="bi bi-pin-angle-fill notice-pin"></i>{% endif %} {{ n.title }}</h6>
+      <div>
+        {% if user.is_superuser or user.role == 'ADMIN' or user.role == 'TEACHER' %}
+        <a href="{% url 'notices:update' n.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+        <a href="{% url 'notices:delete' n.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+        {% endif %}
+      </div>
+    </div>
+    <p class="mb-1">{{ n.content }}</p>
+    <div class="text-muted small">{{ n.get_audience_display }} · Posted by {{ n.posted_by }} on {{ n.created_at|date:"M d, Y" }}</div>
+  </div>
+</div>
+{% empty %}
+<p class="text-muted">No notices posted yet.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,191 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ student.user.get_full_name }}{% endblock %}
+{% block page_title %}Student Profile{% endblock %}
+
+{% block content %}
+
+<div class="card mb-3">
+  <div class="card-body d-flex justify-content-between align-items-center">
+    <div>
+      <h4 class="mb-1">
+        {{ student.user.get_full_name|default:student.user.username }}
+      </h4>
+
+      <div class="text-muted small">
+        {{ student.admission_number }} ·
+        {{ student.course|default:"No class" }} ·
+        Roll {{ student.roll_number|default:"—" }}
+      </div>
+    </div>
+
+    <div>
+      {% if user.is_superuser or user.role == 'ADMIN' or user.role == 'TEACHER' %}
+        <a href="{% url 'students:update' student.pk %}"
+           class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-pencil"></i> Edit
+        </a>
+
+        <a href="{% url 'students:delete' student.pk %}"
+           class="btn btn-outline-danger btn-sm">
+          <i class="bi bi-trash"></i> Delete
+        </a>
+
+      {% elif user.pk == student.user.pk %}
+        <a href="{% url 'students:update' student.pk %}"
+           class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-pencil"></i> Edit My Profile
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+
+  <div class="col-lg-4">
+    <div class="card mb-3">
+      <div class="card-header">Contact & Guardian</div>
+
+      <div class="card-body small">
+        <p class="mb-1">
+          <strong>Email:</strong>
+          {{ student.user.email|default:"—" }}
+        </p>
+
+        <p class="mb-1">
+          <strong>Phone:</strong>
+          {{ student.user.phone|default:"—" }}
+        </p>
+
+        <p class="mb-1">
+          <strong>Guardian:</strong>
+          {{ student.guardian_name|default:"—" }}
+        </p>
+
+        <p class="mb-1">
+          <strong>Guardian Phone:</strong>
+          {{ student.guardian_phone|default:"—" }}
+        </p>
+
+        <p class="mb-0">
+          <strong>Status:</strong>
+          <span class="badge badge-status-{{ student.status }}">
+            {{ student.get_status_display }}
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+
+    <div class="card mb-3">
+      <div class="card-header">Exam Results</div>
+
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>Exam</th>
+              <th>Subject</th>
+              <th>Marks</th>
+              <th>Grade</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for r in results %}
+              <tr>
+                <td>{{ r.exam.name }}</td>
+                <td>{{ r.subject.name }}</td>
+                <td>{{ r.marks_obtained }}/{{ r.max_marks }}</td>
+                <td>{{ r.grade }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="text-center text-muted py-3">
+                  No results yet.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">Recent Attendance</div>
+
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for a in attendance %}
+              <tr>
+                <td>{{ a.date }}</td>
+                <td>
+                  <span class="badge badge-status-{{ a.status }}">
+                    {{ a.get_status_display }}
+                  </span>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="2" class="text-center text-muted py-3">
+                  No attendance yet.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Fee Payments</div>
+
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th>Fee</th>
+              <th>Amount Paid</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for p in fee_payments %}
+              <tr>
+                <td>{{ p.fee_structure.title }}</td>
+                <td>{{ p.amount_paid }}</td>
+                <td>
+                  <span class="badge badge-status-{{ p.status }}">
+                    {{ p.get_status_display }}
+                  </span>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="3" class="text-center text-muted py-3">
+                  No fee records yet.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

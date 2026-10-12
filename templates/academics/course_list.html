@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Courses{% endblock %}
+{% block page_title %}Courses / Classes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div></div>
+  {% if user.is_superuser or user.role == 'ADMIN' %}
+  <a href="{% url 'academics:course_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Course</a>
+  {% endif %}
+</div>
+<div class="row g-3">
+  {% for c in courses %}
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="mb-1">{{ c.name }} {{ c.section }}</h5>
+        <p class="text-muted small mb-2">{{ c.academic_year }} · Class Teacher: {{ c.class_teacher|default:"Unassigned" }}</p>
+        <p class="small mb-2"><strong>Subjects:</strong> {{ c.subjects.count }}</p>
+        <p class="small mb-3"><strong>Students:</strong> {{ c.students.count }}</p>
+        {% if user.is_superuser or user.role == 'ADMIN' %}
+        <a href="{% url 'academics:course_update' c.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+        <a href="{% url 'academics:course_delete' c.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-muted">No courses added yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

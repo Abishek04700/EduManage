@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ teacher.user.get_full_name }}{% endblock %}
+{% block page_title %}Teacher Profile{% endblock %}
+{% block content %}
+<div class="card mb-3">
+  <div class="card-body d-flex justify-content-between align-items-center">
+    <div>
+      <h4 class="mb-1">{{ teacher.user.get_full_name|default:teacher.user.username }}</h4>
+      <div class="text-muted small">{{ teacher.employee_id }} · {{ teacher.qualification|default:"—" }}</div>
+    </div>
+    <div>
+      <a href="{% url 'teachers:update' teacher.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i> Edit</a>
+      <a href="{% url 'teachers:delete' teacher.pk %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Delete</a>
+    </div>
+  </div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card"><div class="card-header">Contact</div>
+      <div class="card-body small">
+        <p class="mb-1"><strong>Email:</strong> {{ teacher.user.email|default:"—" }}</p>
+        <p class="mb-1"><strong>Phone:</strong> {{ teacher.user.phone|default:"—" }}</p>
+        <p class="mb-0"><strong>Specialization:</strong> {{ teacher.specialization|default:"—" }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card"><div class="card-header">Subjects Taught</div>
+      <ul class="list-group list-group-flush">
+        {% for s in teacher.subjects.all %}<li class="list-group-item">{{ s.name }} — {{ s.course }}</li>
+        {% empty %}<li class="list-group-item text-muted small">None assigned.</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Fee Structures{% endblock %}
+{% block page_title %}Fee Structures{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'fees:structure_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Fee Structure</a>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Title</th><th>Class</th><th>Amount</th><th>Due Date</th><th></th></tr></thead>
+      <tbody>
+        {% for f in structures %}
+        <tr>
+          <td>{{ f.title }}</td><td>{{ f.course }}</td><td>${{ f.amount }}</td><td>{{ f.due_date }}</td>
+          <td class="text-end">
+            <a href="{% url 'fees:structure_update' f.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'fees:structure_delete' f.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted py-4">No fee structures yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

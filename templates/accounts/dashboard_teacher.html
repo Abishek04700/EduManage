@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Teacher Dashboard{% endblock %}
+{% block page_title %}My Dashboard{% endblock %}
+{% block content %}
+
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="stat-icon" style="background:var(--accent-soft);color:var(--accent);width:52px;height:52px;font-size:1.4rem;">
+          <i class="bi bi-person-badge-fill"></i>
+        </div>
+        <div>
+          <h5 class="mb-0">{{ user.get_full_name|default:user.username }}</h5>
+          <div class="text-muted small">Employee ID: {{ teacher.employee_id|default:"—" }} · {{ teacher.qualification|default:"" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card mb-3">
+      <div class="card-header">My Subjects</div>
+      <ul class="list-group list-group-flush">
+        {% for s in my_subjects %}
+          <li class="list-group-item d-flex justify-content-between">
+            <span>{{ s.name }}</span>
+            <span class="text-muted small">{{ s.course }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted small">No subjects assigned yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card mb-3">
+      <div class="card-header">Classes I Lead</div>
+      <ul class="list-group list-group-flush">
+        {% for c in my_classes %}
+          <li class="list-group-item">{{ c }}</li>
+        {% empty %}
+          <li class="list-group-item text-muted small">Not assigned as a class teacher.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-4">
+    <a href="{% url 'attendance:mark' %}" class="card text-decoration-none h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <i class="bi bi-calendar-check-fill fs-3" style="color:var(--accent);"></i>
+        <div><div class="fw-semibold">Mark Attendance</div><div class="text-muted small">Take today's attendance</div></div>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-4">
+    <a href="{% url 'exams:list' %}" class="card text-decoration-none h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <i class="bi bi-mortarboard-fill fs-3" style="color:var(--accent);"></i>
+        <div><div class="fw-semibold">Enter Results</div><div class="text-muted small">Add exam scores</div></div>
+      </div>
+    </a>
+  </div>
+  <div class="col-md-4">
+    <a href="{% url 'notices:create' %}" class="card text-decoration-none h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <i class="bi bi-megaphone-fill fs-3" style="color:var(--accent);"></i>
+        <div><div class="fw-semibold">Post a Notice</div><div class="text-muted small">Notify students/staff</div></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">Notice Board</div>
+  <div class="card-body">
+    {% for n in notices %}
+      <div class="mb-2 pb-2 {% if not forloop.last %}border-bottom{% endif %}">
+        <div class="fw-semibold small">{{ n.title }}</div>
+        <div class="text-muted" style="font-size:.8rem;">{{ n.content|truncatewords:20 }}</div>
+      </div>
+    {% empty %}
+      <p class="text-muted small mb-0">No notices yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

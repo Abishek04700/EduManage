@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Subjects{% endblock %}
+{% block page_title %}Subjects{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div></div>
+  {% if user.is_superuser or user.role == 'ADMIN' %}
+  <a href="{% url 'academics:subject_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Subject</a>
+  {% endif %}
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Code</th><th>Name</th><th>Course</th><th>Teacher</th><th></th></tr></thead>
+      <tbody>
+        {% for s in subjects %}
+        <tr>
+          <td>{{ s.code }}</td><td>{{ s.name }}</td><td>{{ s.course }}</td><td>{{ s.teacher|default:"Unassigned" }}</td>
+          <td class="text-end">
+            {% if user.is_superuser or user.role == 'ADMIN' %}
+            <a href="{% url 'academics:subject_update' s.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'academics:subject_delete' s.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted py-4">No subjects yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
